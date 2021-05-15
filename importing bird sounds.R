@@ -74,3 +74,36 @@ mp32wav(path="bird_audio", dest.path="bird_audio")
 unwanted_mp3 <- dir(path="bird_audio", pattern="*.mp3")
 #then remove the mp3 files
 file.remove(paste0("bird_audio/", unwanted_mp3))
+
+####
+
+#look at a single robin's audio file
+robinbird_wav <- readWave("bird_audio/Erithacusrubecula-robin_59772.wav")
+robinbird_wav #shows is stereo, this can cause errors in MFCC calculations because they use one channel calculations (mono)
+oscillo(robinbird_wav)
+#zoom in
+oscillo(robinbird_wav, from = 0.59, to = 0.60)
+#make a spectrogram
+SpectrogramSingle(sound.file = "bird_audio/Erithacusrubecula-robin_59772.wav",Colors = "Colors")
+#do some more spectrograms to compare patterns
+SpectrogramSingle(sound.file = "bird_audio/Erithacusrubecula-robin_148706.wav",Colors = "Colors")
+SpectrogramSingle(sound.file = "bird_audio/Erithacusrubecula-robin_296863.wav",Colors = "Colors")
+
+####
+
+#MFCC of birdsongs
+#changes max freq to 7000
+bird_mfcc <- MFCCFunction(input.dir = "bird_audio", max.freq=7000)
+dim(bird_mfcc)#shows dimensions reduced to 178
+
+#lets do a PCA
+#need to remove first column of the MFCC again as it is the class
+blackbird_pca <- ordi_pca(blackbird_mfcc[, -1], scale=TRUE)
+summary(blackbird_pca)
+#less variation explained by first few axes compared to the monkey PCA, possibly due to working with data across multiple sp, and using citizen science data, and haven't removed low quality files
+#plot by class
+blackbird_sco <- ordi_scores(blackbird_pca, display="sites")
+blackbird_sco <- mutate(blackbird_sco, group_code = blackbird_mfcc$Class)
+
+ggplot(blackbird_sco, aes(x=PC1, y=PC2, colour=group_code)) +
+  geom_point()
