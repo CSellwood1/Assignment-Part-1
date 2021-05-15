@@ -9,12 +9,12 @@ library(stringr) # part of tidyverse for sorting folders
 
 #search for European robin (Erithacus rubecula) recordings in the UK, limiting the length to 5 to 25 secs
 #search for Chaffinch (Fringilla coelebs) recordings in the UK, limiting the length to 5 to 25 secs
-#search for Nuthatch (Sitta europaea) recordings in the UK, limiting the length to 5 to 25 secs
+#search for Yellowhammer (Emberiza citrinella) recordings in the UK, limiting the length to 5 to 25 secs
 robin_songs <- query_xc(qword = 'Erithacus rubecula cnt:"united kingdom" type:song len:5-25', download = FALSE)
 
 chaffinch_songs <- query_xc(qword = 'Fringilla coelebs cnt:"united kingdom" type:song len:5-25', download = FALSE)
 
-nuthatch_songs <- query_xc(qword = 'Sitta europaea cnt:"united kingdom" type:song len:5-25', download = FALSE)
+yellowhammer_songs <- query_xc(qword = 'Emberiza citrinella cnt:"united kingdom" type:song len:5-25', download = FALSE)
 
 blackbird_songs
 #shows lots of info including quality (A highest, E lowest), other sp heard in the clip etc
