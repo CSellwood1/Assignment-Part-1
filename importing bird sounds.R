@@ -68,8 +68,9 @@ file.copy(from=paste0("chaffinch_songs/",list.files("chaffinch_songs")),
           to="bird_audio")
 file.copy(from=paste0("yellowhammer_songs/",list.files("yellowhammer_songs")),
           to="bird_audio")
+
 #use mp32wav func in warbleR to convert these mp3s to .wav files
-mp32wav(path="blackbird_audio", dest.path="blackbird_audio")
-unwanted_mp3 <- dir(path="blackbird_audio", pattern="*.mp3")
+mp32wav(path="bird_audio", dest.path="bird_audio")
+unwanted_mp3 <- dir(path="bird_audio", pattern="*.mp3")
 #then remove the mp3 files
-file.remove(paste0("blackbird_audio/", unwanted_mp3))
+file.remove(paste0("bird_audio/", unwanted_mp3))
