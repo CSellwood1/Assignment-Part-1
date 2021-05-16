@@ -114,8 +114,9 @@ summary(bird_pca)
 bird_sco <- ordi_scores(bird_pca, display="sites")
 bird_sco <- mutate(bird_sco, group_code = bird_mfcc$Class)
 
-ggplot(bird_sco, aes(x=PC1, y=PC2, colour=group_code)) +
+plot<-ggplot(bird_sco, aes(x=PC1, y=PC2, colour=group_code)) +
   geom_point() + theme_classic()
 
-bird_sco2<- ordi_scores(bird_pca, display="species")
-bird_sco2 <- mutate(bird_sco2, group_code2 = bird_mfcc$Class)
+plot+ scale_color_manual(name = "Bird species" , labels = c("Yellowhammer", "Robin", "Chaffinch"), values = c("darkturquoise", "darkviolet", "red2"))
+
+
