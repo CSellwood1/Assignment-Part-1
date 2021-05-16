@@ -4,8 +4,10 @@ library(tuneR)
 library(seewave)
 library(ggplot2)
 library(dplyr)
+library(vegan)
 library(warbleR)#for importing xeno-canto website
-library(stringr) # part of tidyverse for sorting folders
+library(stringr)# part of tidyverse for sorting folders
+source("nes8010.R")
 
 #search for European robin (Erithacus rubecula) recordings in the UK, limiting the length to 5 to 25 secs
 #search for Chaffinch (Fringilla coelebs) recordings in the UK, limiting the length to 5 to 25 secs
@@ -78,16 +80,22 @@ file.remove(paste0("bird_audio/", unwanted_mp3))
 ####
 
 #look at a single robin's audio file
-robinbird_wav <- readWave("bird_audio/Erithacusrubecula-robin_59772.wav")
+robinbird_wav <- readWave("bird_audio/Erithacusrubecula-robin_148706.wav")
 robinbird_wav #shows is stereo, this can cause errors in MFCC calculations because they use one channel calculations (mono)
 oscillo(robinbird_wav)
 #zoom in
 oscillo(robinbird_wav, from = 0.59, to = 0.60)
+#run oscillograms for other species
+chaffinchbird_wav <- readWave("bird_audio/Fringillacoelebs-chaffinch_76197.wav")
+oscillo(chaffinchbird_wav)
+yellowhammerbird_wav <- readWave("bird_audio/Emberizacitrinella-yellowhammer_216388.wav")
+oscillo(yellowhammerbird_wav)
+
 #make a spectrogram
-SpectrogramSingle(sound.file = "bird_audio/Erithacusrubecula-robin_59772.wav",Colors = "Colors")
-#do some more spectrograms to compare patterns
 SpectrogramSingle(sound.file = "bird_audio/Erithacusrubecula-robin_148706.wav",Colors = "Colors")
-SpectrogramSingle(sound.file = "bird_audio/Erithacusrubecula-robin_296863.wav",Colors = "Colors")
+#do some more spectrograms to compare patterns
+SpectrogramSingle(sound.file = "bird_audio/Fringillacoelebs-chaffinch_76197.wav",Colors = "Colors")
+SpectrogramSingle(sound.file = "bird_audio/Emberizacitrinella-yellowhammer_216388.wav",Colors = "Colors")
 
 ####
 
@@ -98,12 +106,16 @@ dim(bird_mfcc)#shows dimensions reduced to 178
 
 #lets do a PCA
 #need to remove first column of the MFCC again as it is the class
-blackbird_pca <- ordi_pca(blackbird_mfcc[, -1], scale=TRUE)
-summary(blackbird_pca)
-#less variation explained by first few axes compared to the monkey PCA, possibly due to working with data across multiple sp, and using citizen science data, and haven't removed low quality files
-#plot by class
-blackbird_sco <- ordi_scores(blackbird_pca, display="sites")
-blackbird_sco <- mutate(blackbird_sco, group_code = blackbird_mfcc$Class)
+bird_pca <- ordi_pca(bird_mfcc[, -1], scale=TRUE)
+summary(bird_pca)
 
-ggplot(blackbird_sco, aes(x=PC1, y=PC2, colour=group_code)) +
-  geom_point()
+#first 5 axes explain 0.46074 of variation
+#plot by class
+bird_sco <- ordi_scores(bird_pca, display="sites")
+bird_sco <- mutate(bird_sco, group_code = bird_mfcc$Class)
+
+ggplot(bird_sco, aes(x=PC1, y=PC2, colour=group_code)) +
+  geom_point() + theme_classic()
+
+bird_sco2<- ordi_scores(bird_pca, display="species")
+bird_sco2 <- mutate(bird_sco2, group_code2 = bird_mfcc$Class)
